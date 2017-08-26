@@ -3,6 +3,9 @@ package uk.wangbot.fw;
 import uk.wangbot.fw.character.*;
 import uk.wangbot.fw.character.Character;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -29,7 +32,15 @@ public class FrozenWanderer {
         }
 
         myCharacter.levelUp(new Level(new PlayerChosenStatBlock(SkillType.ATTACK)));
-
+        try {
+            FileOutputStream savedCharacter = new FileOutputStream("myCharacter.ser");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(savedCharacter);
+            objectOutputStream.writeObject(myCharacter);
+            objectOutputStream.close();
+            savedCharacter.close();
+        } catch (IOException exception) {
+            System.err.print("Exception!");
+        }
 
         for (SkillType skillType : myCharacter.getStats().keySet()) {
             System.out.println(String.format("%s: %d", skillType.name(), myCharacter.getStat(skillType)));

@@ -2,6 +2,7 @@ package uk.wangbot.fw.character;
 
 import com.sun.org.apache.regexp.internal.RE;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Vector;
@@ -9,7 +10,7 @@ import java.util.Vector;
 /**
  * Created by wjw on 20/08/2017.
  */
-public abstract class Character {
+public abstract class Character implements Serializable {
     private int experience;
     private CharacterClass classType; // no multiclassing!
     private Vector<Level> levels;

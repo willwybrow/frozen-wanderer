@@ -1,9 +1,11 @@
 package uk.wangbot.fw.character;
 
+import java.io.Serializable;
+
 /**
  * Created by wjw on 20/08/2017.
  */
-public class StatBlock {
+public class StatBlock implements Serializable {
     private SkillType skillType;
     private int modifier;
 

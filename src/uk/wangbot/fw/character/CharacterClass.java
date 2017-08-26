@@ -1,12 +1,13 @@
 package uk.wangbot.fw.character;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by wjw on 20/08/2017.
  */
 
-public enum CharacterClass {
+public enum CharacterClass implements Serializable {
     FIGHTER(SkillType.ATTACK, SkillType.DEFENCE, SkillType.ABILITY, SkillType.HEALTH),
     HEALER(SkillType.DEFENCE, SkillType.HEALTH, SkillType.ATTACK, SkillType.ABILITY),
     MAGE(SkillType.ABILITY, SkillType.ATTACK, SkillType.HEALTH, SkillType.DEFENCE),
