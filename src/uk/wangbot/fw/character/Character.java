@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public abstract class Character {
     private int experience;
-    private CharacterClass classType;
+    private CharacterClass classType; // no multiclassing!
     private Vector<Level> levels;
     private Religion religion;
 
@@ -27,7 +27,7 @@ public abstract class Character {
     }
 
     public boolean canLevelUp() {
-        return this.religion != null && this.experience > Character.xpToLevel(levels.size() + 1);
+        return levels.size() < 20 && this.religion != null && this.experience > Character.xpToLevel(levels.size() + 1);
     }
 
 
