@@ -21,4 +21,8 @@ public class StatBlock implements Serializable {
     public int getModifier() {
         return this.modifier;
     }
+
+    public boolean isDebuff() {
+        return this.modifier < 0;
+    }
 }

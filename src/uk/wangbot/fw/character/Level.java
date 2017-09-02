@@ -6,13 +6,13 @@ import java.io.Serializable;
  * Created by wjw on 20/08/2017.
  */
 public class Level implements Serializable {
-    private StatBlock statBlock;
+    private SkillType skillType;
 
-    public Level(StatBlock statBlock) {
-        this.statBlock = statBlock;
+    public Level(SkillType skillType) {
+        this.skillType = skillType;
     }
 
-    public StatBlock getStatBlock() {
-        return this.statBlock;
+    public SkillType getSkillType() {
+        return this.skillType;
     }
 }
