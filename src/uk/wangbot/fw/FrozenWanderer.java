@@ -8,6 +8,8 @@ import uk.wangbot.fw.race.ClassableRace;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -72,6 +74,132 @@ public class FrozenWanderer {
         }
         System.out.println(String.format("Attack damage: %f\nArmour:        %f\nAbility power: %f\nHealth:        %f", classlessCharacter.getAttackDamage(), classlessCharacter.getArmour(), classlessCharacter.getAbilityPower(), classlessCharacter.getMaxHealth()));
         */
+        /*
+        HashMap<String, Integer> resultCount = new HashMap<>();
+        for (int i = 1; i <= 20; i++) {
+            System.out.println(String.format("Simulating level %d", i));
+            for (int j = 0; j < 1000; j++) {
+
+                System.out.println(String.format("Iteration %d", j));
+                String result = simulateBattle(i, SkillType.ATTACK, SkillType.DEFENCE);
+                resultCount.put(result, (resultCount.get(result) == null ? 0 : resultCount.get(result)) + 1);
+            }
+        }*/
+        HashMap<String, Integer> resultCount;
+
+        System.out.println("Attack vs defence level 1");
+        resultCount = powerCurveSimulation(1, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.DEFENCE});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs defence level 20");
+        resultCount = powerCurveSimulation(20, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.DEFENCE});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs health level 1");
+        resultCount = powerCurveSimulation(1, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.HEALTH});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs health level 20");
+        resultCount = powerCurveSimulation(20, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.HEALTH});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs health + defence level 1");
+        resultCount = powerCurveSimulation(1, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.DEFENCE, SkillType.HEALTH});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs health + defence level 20");
+        resultCount = powerCurveSimulation(20, new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.DEFENCE, SkillType.HEALTH});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+
+        /*
+        System.out.println("Attack vs health");
+        resultCount = powerCurveSimulation(new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.HEALTH});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+
+        System.out.println("Attack vs health+defence");
+        resultCount = powerCurveSimulation(new SkillType[] {SkillType.ATTACK}, new SkillType[] {SkillType.HEALTH, SkillType.DEFENCE});
+
+        for (Map.Entry<String, Integer> entry : resultCount.entrySet()) {
+            System.out.println(String.format("%s: %d", entry.getKey(), entry.getValue()));
+        }
+        */
+    }
+
+    public static HashMap<String, Integer> powerCurveSimulation(int level, SkillType[] attackerSkills, SkillType[] defenderSkills) {
+
+        HashMap<String, Integer> resultCount = new HashMap<>();
+
+        Character attackingCharacter = new NPC(ClassableRace.SNOWMAN);
+        Character defendingCharacter = new NPC(ClassableRace.SNOWMAN);
+
+
+        attackingCharacter.declareReligion(Religion.ANCIENT);
+        defendingCharacter.declareReligion(Religion.ANCIENT);
+
+        int attackerSkillCounter = 0;
+        int defenderSkillCounter = 0;
+
+        for (int i = 0; i < level; i++) {
+            attackingCharacter.gainExperience(attackingCharacter.experienceToNextLevel());
+            attackingCharacter.levelUp(new Level(attackerSkills[attackerSkillCounter % attackerSkills.length]));
+
+            defendingCharacter.gainExperience(defendingCharacter.experienceToNextLevel());
+            defendingCharacter.levelUp(new Level(defenderSkills[defenderSkillCounter % defenderSkills.length]));
+
+            attackerSkillCounter += 1;
+            defenderSkillCounter += 1;
+        }
+
+        for (int j = 0; j < 1000; j++) {
+            while (attackingCharacter.getCurrentHealth() < attackingCharacter.getMaxHealth()) {
+                attackingCharacter.healDamage(attackingCharacter.getMaxHealth());
+            }
+            while (defendingCharacter.getCurrentHealth() < defendingCharacter.getMaxHealth()) {
+                defendingCharacter.healDamage(defendingCharacter.getMaxHealth());
+            }
+            while (!attackingCharacter.isDead() && !defendingCharacter.isDead()) {
+                attackingCharacter.basicAttackCharacter(defendingCharacter);
+                defendingCharacter.basicAttackCharacter(attackingCharacter);
+            }
+            String winner = "draw";
+            if (attackingCharacter.isDead() && defendingCharacter.isDead()) {
+                winner = "draw";
+            } else if (attackingCharacter.isDead()) {
+                winner = "defender";
+            } else if (defendingCharacter.isDead()) {
+                winner = "attacker";
+            }
+
+            resultCount.put(winner, (resultCount.get(winner) == null ? 0 : resultCount.get(winner)) + 1);
+        }
+
+
+        return resultCount;
+    }
+
+    public static String simulateBattle(int numberOfLevels, SkillType attackerSkill, SkillType defenderSkill) {
 
         Character attackingCharacter = new NPC(ClassableRace.SNOWMAN);
         Character defendingCharacter = new NPC(ClassableRace.SNOWMAN);
@@ -82,17 +210,14 @@ public class FrozenWanderer {
         attackingCharacter.declareReligion(Religion.ANCIENT);
         defendingCharacter.declareReligion(Religion.ANCIENT);
 
-        attackingCharacter.gainExperience(attackingCharacter.experienceToNextLevel());
-        defendingCharacter.gainExperience(defendingCharacter.experienceToNextLevel());
+        for (int i = 0; i < numberOfLevels; i++) {
 
-        attackingCharacter.levelUp(new Level(SkillType.ATTACK));
-        defendingCharacter.levelUp(new Level(SkillType.HEALTH));
+            attackingCharacter.gainExperience(attackingCharacter.experienceToNextLevel());
+            defendingCharacter.gainExperience(defendingCharacter.experienceToNextLevel());
 
-        attackingCharacter.gainExperience(attackingCharacter.experienceToNextLevel());
-        defendingCharacter.gainExperience(defendingCharacter.experienceToNextLevel());
-
-        attackingCharacter.levelUp(new Level(SkillType.ATTACK));
-        defendingCharacter.levelUp(new Level(SkillType.DEFENCE));
+            attackingCharacter.levelUp(new Level(attackerSkill));
+            defendingCharacter.levelUp(new Level(defenderSkill));
+        }
 
         printStats(attackingCharacter);
         printStats(defendingCharacter);
@@ -100,27 +225,32 @@ public class FrozenWanderer {
         printStatus(defendingCharacter);
 
         int round = 0;
+        double damageDealt = 0.0;
 
         while (!attackingCharacter.isDead() && !defendingCharacter.isDead()) {
-            System.out.println(String.format("ROUND %d", round));
+//            System.out.println(String.format("ROUND %d", round));
+//
+            damageDealt = attackingCharacter.basicAttackCharacter(defendingCharacter);
+//            System.out.println(String.format("Attacker hits for %f", damageDealt));
+            damageDealt = defendingCharacter.basicAttackCharacter(attackingCharacter);
+//            System.out.println(String.format("Defender hits back for %f", damageDealt));
 
-            System.out.println(String.format("Attacker hits for %f", attackingCharacter.basicAttackCharacter(defendingCharacter)));
-            System.out.println(String.format("Defender hits back for %f", defendingCharacter.basicAttackCharacter(attackingCharacter)));
-
-            printStatus(attackingCharacter);
-            printStatus(defendingCharacter);
+//            printStatus(attackingCharacter);
+//            printStatus(defendingCharacter);
 
             round += 1;
         }
 
         if (attackingCharacter.isDead() && !defendingCharacter.isDead()) {
-            System.out.println("Defender wins!");
+//            System.out.println("Defender wins!");
+            return "Defender";
         } else if (!attackingCharacter.isDead() && defendingCharacter.isDead()) {
-            System.out.println("Attacker wins!");
+//            System.out.println("Attacker wins!");
+            return "Attacker";
         } else {
-            System.out.println("Mutual destruction!");
+//            System.out.println("Mutual destruction!");
+            return "Draw";
         }
-
     }
 
     public static void printStats(Character character) {

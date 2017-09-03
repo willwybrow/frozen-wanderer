@@ -6,10 +6,10 @@ import java.io.Serializable;
  * Created by wjw on 20/08/2017.
  */
 public enum SkillType implements Serializable {
-    ATTACK(50.0, 2.5),
-    DEFENCE(25.0, 4.0),
-    HEALTH(525.0, 75.0),
-    ABILITY(15.0, 1.0);
+    ATTACK(17.5, 4.5),
+    DEFENCE(10.0, 1.75),
+    HEALTH(250.0, 12.5),
+    ABILITY(15.0, 1.75);
 
     double baseValue;
     double growthByLevel;

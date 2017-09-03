@@ -139,7 +139,7 @@ public abstract class Character implements Serializable {
     }
 
     public void healDamage(double healing) {
-        this.damageTaken -= healing;
+        this.damageTaken = Math.max(0.0, this.damageTaken - healing);
     }
 
     public int getLevel() {
@@ -147,7 +147,7 @@ public abstract class Character implements Serializable {
     }
 
     public double getCurrentHealth() {
-        return this.getMaxHealth() - this.damageTaken;
+        return Math.max(0.0, this.getMaxHealth() - this.damageTaken);
     }
 
     public double getMaxHealth() {
@@ -198,7 +198,7 @@ public abstract class Character implements Serializable {
         boolean isCrit = (random.nextDouble() * 100.0) < critChance;
 
         if (isCrit) {
-            System.out.println("Critical hit!");
+//            System.out.println("Critical hit!");
             double critDamage = this.getCritDamage();
             attackDamage += critDamage;
 
@@ -211,7 +211,7 @@ public abstract class Character implements Serializable {
             }
         }
 
-        double damageDealt = attackDamage * (100.0 / (100.0 + targetArmour));
+        double damageDealt = attackDamage * (20.0 / (20.0 + targetArmour));
 
         double dodgeChance = target.getDodgeChance();
 
@@ -219,7 +219,7 @@ public abstract class Character implements Serializable {
 
         if (isDodge) {
 
-            System.out.println("Dodged!");
+//            System.out.println("Dodged!");
             damageDealt = 0.0;
         }
 
